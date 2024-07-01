@@ -1,5 +1,6 @@
 ﻿using Castle.DynamicProxy;
 using Core.Utilities.Interceptors;
+using Core.Utilities.Ioc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +18,7 @@ namespace Core.Aspects.AutoFac
         public PerformanceAspect(int interval)
         {
             _interval = interval;
-            _stopwatch = ServiceTool.ServiceProvider.GetService<Stopwatch>();
+            //_stopwatch = ServiceTool.ServiceProvider.GetService<Stopwatch>();
         }
 
 

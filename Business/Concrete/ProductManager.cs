@@ -10,6 +10,7 @@ using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Core.Aspects.AutoFac;
 
 namespace Business.Concrete
 {
@@ -22,16 +23,10 @@ namespace Business.Concrete
             _productDal = productDal;
         }
 
+        [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
             //business codes if elses
-            var context = new ValidationContext<Product>(product);
-            ProductValidator productValidator = new ProductValidator();
-            var result = productValidator.Validate(context);
-            if (!result.IsValid)
-            {
-                throw new ValidationException(result.Errors);
-            }
             _productDal.Add(product);
             return new SuccessResult(Messages.ProductAdded);
         }
