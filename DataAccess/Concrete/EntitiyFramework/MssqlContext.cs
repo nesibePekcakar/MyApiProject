@@ -16,6 +16,12 @@ namespace DataAccess.Concrete.EntitiyFramework
             optionsBuilder.UseSqlServer(@"Server = EGURSU2\MSSQLSERVER02;Database=myDatabase;Integrated Security=true;TrustServerCertificate=True");
             //"MyConnectionString": "Server=EGURSU2\\MSSQLSERVER02;Database=myDatabase;Integrated Security=True;"
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .Property(u => u.Status)
+                .HasConversion<byte>(); // tinyint için byte kullanıyoruz
+        }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Customer> Customers { get; set; }
