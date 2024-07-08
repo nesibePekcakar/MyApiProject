@@ -1,0 +1,92 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin: 20px auto;
+    max-width: 800px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    .form-group input {
+        width: calc(100% - 16px); /* Adjusted for padding */
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    border-radius: 3px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+.product-list {
+    margin-top: 20px;
+}
+
+.list-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* Align buttons to the left */
+    margin-bottom: 10px;
+}
+.product-item {
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+}
+
+/* Specific styles for login page */
+#auth {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+    #auth h2 {
+        margin-bottom: 10px;
+        color: #333;
+        text-align: center;
+    }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        padding: 15px;
+    }
+
+    .form-group input,
+    button {
+        font-size: 13px;
+    }
+}

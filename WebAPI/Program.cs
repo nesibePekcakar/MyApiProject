@@ -13,7 +13,8 @@ using Core.Utilities.Security.Encryption;
 using Core.Utilities.Security.JWT;
 using Core.Extensions;
 using Core.DependencyResolvers;
-using Autofac.Core;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,9 @@ builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+
+
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
@@ -51,6 +54,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.WithOrigins("https://localhost:7171")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 
 // Autofac,Ninject,CastleWindsor -->Ioc Container alternatives
 // AOP --> [...] Autofac includes aop(ascpect oriented programming)
@@ -61,13 +75,13 @@ builder.Services.AddDependencyResolvers(new Core.Utilities.Ioc.ICoreModule[]
 {
     new CoreModule()
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
@@ -75,6 +89,15 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+
+// New addition: Use static files middleware
+app.UseStaticFiles();
+// New addition: Enable directory browsing (optional)
+app.UseDirectoryBrowser();
+// New addition: Enable CORS
+app.UseCors("AllowSpecificOrigin");
+
 
 app.MapControllers();
 

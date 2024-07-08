@@ -1,4 +1,5 @@
 ﻿using Core.Entities.Concrete;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,7 @@ namespace Business.Constants
         public static string SuccessfulLogin="Login Succesfull";
         public static string UserAlreadyExists="This user is already exists";
         public static string AccessTokenCreated="Token is created";
+        public static string ProductDeleted = "Product Deleted Succesfully";
+        public static string CategoryNotFound = "This category does not exists";
     }
 }

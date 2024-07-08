@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+    <link rel="stylesheet" href="StyleSheet.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensure full viewport height */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px; /* Adjusted for better readability */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin: 20px; /* Added margin for spacing */
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+            .container button {
+                justify-content: center;
+                margin-right: 10px;
+                margin-bottom: 10px;
+                margin-top: 10px;
+            }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+
+        button {
+            margin: 10px 0; /* Added margin for spacing */
+            padding: 10px 5px 5px 15px;
+            cursor: pointer;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 3px;
+            display: block;
+            margin: auto; /* Center the buttons */
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        .product-list {
+            margin-top: 20px;
+            
+            justify-content: center; 
+            flex-wrap: wrap; 
+        }
+            .product-list button {
+                justify-content: center;
+                margin-right: 10px;
+                margin-bottom: 10px;
+                margin-top: 10px;
+            }
+
+        .product-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+            margin-bottom: 10px; /* Added margin between product items */
+        }
+
+        /* Specific styles for login page */
+        #auth {
+            background-color: #f9f9f9;
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px; /* Added margin for separation */
+        }
+
+        /* Styles for different sections */
+        .action-section {
+            display: none;
+        }
+
+            .action-section.active {
+                display: block;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="app">
+        <h1 style="text-align:center;">Product Management</h1>
+
+        <div id="auth">
+            <h2>Authentication</h2>
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail">
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword">
+            </div>
+            <button onclick="login()">Login</button>
+            <button onclick="register()">Register</button>
+        </div>
+
+        <div id="product-management" style="display:none;">
+            <h2>Actions</h2>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+                <button onclick="showAction('add')">Add Product</button>
+                <button onclick="showAction('update')">Update Product</button>
+                <button onclick="showAction('delete')">Delete Product</button>
+                <button onclick="showAction('list')">List Products</button>
+                <button onclick="backToActions()" id="backButton" style="display: none;">Back</button>
+            </div>
+
+            <div id="add-section" class="action-section">
+                <h2>Add Product</h2>
+                <div class="form-group">
+                    <label for="productId">Product Id</label>
+                    <input type="text" id="productId">
+                </div>
+                <div class="form-group">
+                    <label for="productName">Name</label>
+                    <input type="text" id="productName">
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">Category</label>
+                    <input type="number" id="productCategory">
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">Price</label>
+                    <input type="number" id="productPrice">
+                </div>
+                <div class="form-group">
+                    <label for="unitsInStock">Units in Stock</label>
+                    <input type="number" id="unitsInStock">
+                </div>
+                <button onclick="addProduct()">Add Product</button>
+            </div>
+
+
+            <div id="update-section" class="action-section">
+                <h2>Update Product</h2>
+                <div class="form-group">
+                    <label for="updateProductId">Product ID</label>
+                    <input type="number" id="updateProductId">
+                </div>
+                <div class="form-group">
+                    <label for="updateProductName">Name</label>
+                    <input type="text" id="updateProductName">
+                </div>
+                <div class="form-group">
+                    <label for="updateProductCategory">Category</label>
+                    <input type="number" id="updateProductCategory">
+                </div>
+                <div class="form-group">
+                    <label for="updateProductPrice">Price</label>
+                    <input type="number" id="updateProductPrice">
+                </div>
+                <button onclick="updateProduct()">Update Product</button>
+            </div>
+
+            <div id="delete-section" class="action-section">
+                <h2>Delete Product</h2>
+                <div class="form-group">
+                    <label for="deleteProductId">Product ID</label>
+                    <input type="number" id="deleteProductId">
+                </div>
+                <button onclick="deleteProduct()">Delete Product</button>
+            </div>
+
+            <div id="list-section" class="action-section">
+                <h2>List Products</h2>
+                <div style="margin-bottom: 10px;">
+                    <button onclick="getAllProducts()">Get All Products</button>
+                    <button onclick="showFilter('category')">Get Products by Category</button>
+                    <button onclick="showFilter('unitPrice')">Get Products by Unit Price</button>
+                    <button onclick="showFilter('productId')">Get Product by ID</button>
+                    <button onclick="showFilter('productName')">Get Product by Name</button>
+                </div>
+
+                <div class="form-group" id="categoryFilter" style="display: none;">
+                    <label for="category">Category</label>
+                    <input type="number" id="category">
+                    <button onclick="getProductsByCategory()">Find</button>
+                </div>
+
+                <div class="form-group" id="unitPriceFilter" style="display: none;">
+                    <label for="minPrice">Min Price</label>
+                    <input type="number" id="minPrice">
+                    <label for="maxPrice">Max Price</label>
+                    <input type="number" id="maxPrice">
+                    <button onclick="getProductsByUnitPrice()">Find</button>
+                </div>
+
+                <div class="form-group" id="productIdInput" style="display: none;">
+                    <label for="productId">Product ID</label>
+                    <input type="number" id="productId">
+                    <button onclick="getProductById()">Find</button>
+                </div>
+
+                <div class="form-group" id="productNameInput" style="display: none;">
+                    <label for="productName">Product Name</label>
+                    <input type="text" id="productName">
+                    <button onclick="getProductByName()">Find</button>
+                </div>
+
+                <div class="product-list" id="productList">
+                    <!-- Product list will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
