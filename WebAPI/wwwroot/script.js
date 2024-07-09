@@ -72,21 +72,6 @@ function backToActions() {
     document.getElementById('backButton').style.display = 'none';
 }
 
-function getAllProducts() {
-    fetch(`${apiBaseUrl}/products/GetAll`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(displayProductList)
-        .catch(error => {
-            const productListDiv = document.getElementById('productList');
-            productListDiv.innerHTML = `<p>Error fetching products: ${error.message}</p>`;
-            console.error('Error fetching products:', error);
-        });
-}
 
 function displayProductList(response) {
     const productListDiv = document.getElementById('productList');
@@ -126,11 +111,26 @@ function displayProductList(response) {
             productListDiv.appendChild(productItem);
         }
     } else {
+        productListDiv.append(response.message);
         productListDiv.innerHTML = `<p>Error fetching products: ${jsonResponse.message}</p>`;
     }
 }
 
-
+function getAllProducts() {
+    fetch(`${apiBaseUrl}/products/GetAll`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(displayProductList)
+        .catch(error => {
+            const productListDiv = document.getElementById('productList');
+            productListDiv.innerHTML = `<p>Error fetching products: ${error.message}</p>`;
+            console.error('Error fetching products:', error);
+        });
+}
 
 function getProductsByCategory() {
     const category = document.getElementById('category').value;
@@ -150,9 +150,17 @@ function getProductsByCategory() {
 }
 
 function getProductsByUnitPrice() {
-    const minPrice = document.getElementById('minPrice').value;
-    const maxPrice = document.getElementById('maxPrice').value;
-    fetch(`${apiBaseUrl}/products/GetByUnitPrice?minPrice=${minPrice}&maxPrice=${maxPrice}`)
+    
+    const minPrice = parseFloat(document.getElementById('minPrice').value.trim());
+    const maxPrice = parseFloat(document.getElementById('maxPrice').value.trim());
+
+    if (isNaN(minPrice) || isNaN(maxPrice)) {
+        alert('Please enter valid prices.');
+        return;
+    }
+
+
+    fetch(`${apiBaseUrl}/products/GetByUnitPrice?min=${minPrice}&max=${maxPrice}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -161,15 +169,39 @@ function getProductsByUnitPrice() {
         })
         .then(displayProductList)
         .catch(error => {
-            const productListDiv = document.getElementById('productList');
+            productListDiv.innerHTML = `<p>Error fetching products: ${response.message}</p>`
             productListDiv.innerHTML = `<p>Error fetching products: ${error.message}</p>`;
             console.error('Error fetching products:', error);
         });
 }
 
 function getProductById() {
-    const productId = document.getElementById('productId').value;
-    fetch(`${apiBaseUrl}/products/GetByID/${productId}`)
+    const id = document.getElementById('id').value;
+
+    fetch(`${apiBaseUrl}/products/GetByID/${id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+
+        if (data.error) {
+            throw new Error(data.message);
+        } 
+        displayProductList(data);
+         })
+        .catch(error => {
+            productListDiv.innerHTML = `<p>Error fetching products: ${error.message}</p>`;
+            console.error('Error fetching products:', error);
+        });
+}
+
+function getProductByName() {
+    const name = document.getElementById('name').value;
+
+    fetch(`${apiBaseUrl}/products/GetByName/${name}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -178,22 +210,60 @@ function getProductById() {
         })
         .then(displayProductList)
         .catch(error => {
-            const productListDiv = document.getElementById('productList');
-            productListDiv.innerHTML = `<p>Error fetching products: ${error.message}</p>`;
-            console.error('Error fetching products:', error);
+            productListDiv.innerHTML = `<p>Error fetching products by name: ${error.message}</p>`;
+            console.error('Error fetching products by name:', error);
         });
 }
+function displayProductDetails(response) {
+    const productListDiv = document.getElementById('productList');
+    productListDiv.innerHTML = ''; // Clear previous content
+    if (response.isSuccess) {
+        let productDetails = response.data;
 
+        // Ensure productDetails is an array
+        if (!Array.isArray(productDetails)) {
+            productDetails = [productDetails];
+        }
 
+        for (const detail of productDetails) {
+            const detailItem = document.createElement('div');
+            detailItem.classList.add('product-detail');
+            detailItem.innerHTML = `
+                <strong>Product ID:</strong> ${detail.productId}<br>
+                <strong>Name:</strong> ${detail.productName}<br>
+                <strong>Category Name:</strong> ${detail.categoryName}<br>         
+                <strong>Units in Stock:</strong> ${detail.unitsInStock}<br>
+            `;
+            productListDiv.appendChild(detailItem);
+        }
 
-
+    } else {
+        productListDiv.innerHTML = `<p>Error fetching product details: ${response.message}</p>`;
+    }
+}
+function getProductDetails() {
+    fetch(`${apiBaseUrl}/products/GetProductDetails`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayProductDetails(data);
+        })
+        .catch(error => {
+            productDetailsDiv.innerHTML = `<p>Error fetching product details: ${error.message}</p>`;
+            console.error('Error fetching product details:', error);
+        });
+}
 
 function addProduct() {
     const productId = parseInt(document.getElementById('productId').value.trim(), 10);
     const productName = document.getElementById('productName').value.trim();
     const categoryId = parseInt(document.getElementById('productCategory').value.trim(), 10);
-    const unitPrice = parseFloat(document.getElementById('productPrice').value.trim()); // Ensure price is parsed as float
-    const unitsInStock = parseInt(document.getElementById('unitsInStock').value.trim(), 10); // Ensure unitsInStock is parsed as integer and then casted to short
+    const unitPrice = parseFloat(document.getElementById('productPrice').value.trim());
+    const unitsInStock = parseInt(document.getElementById('unitsInStock').value.trim(), 10);
 
     const productData = {
         productId: productId,
@@ -214,7 +284,7 @@ function addProduct() {
         .then(response => {
             if (response.ok) {
                 alert('Product added successfully');
-                backToActions(); // Assuming you have a function to navigate back or perform another action
+                backToActions(); 
             } else {
                 throw new Error('Failed to add product');
             }
@@ -229,22 +299,27 @@ function addProduct() {
 
 
 function updateProduct() {
-    const productId = document.getElementById('updateProductId').value;
-    const productName = document.getElementById('updateProductName').value;
-    const category = document.getElementById('updateProductCategory').value;
-    const price = document.getElementById('updateProductPrice').value;
+    const productId = parseInt(document.getElementById('updateProductId').value.trim(), 10);
+    const productName = document.getElementById('updateProductName').value.trim();
+    const categoryId = parseInt(document.getElementById('updateProductCategory').value.trim(), 10);
+    const unitPrice = parseFloat(document.getElementById('updateUnitPrice').value.trim());
+    const unitsInStock = parseInt(document.getElementById('updateUnitsInStock').value.trim(), 10);
 
-    fetch(`${apiBaseUrl}/products/Update/${productId}`, {
+    const updatedProductData = {
+        productId: productId,
+        categoryId: categoryId,
+        productName: productName,
+        unitPrice: unitPrice,
+        unitsInStock: unitsInStock
+    };
+
+    fetch(`${apiBaseUrl}/products/Update`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-            name: productName,
-            category: category,
-            price: price
-        })
+        body: JSON.stringify(updatedProductData)
     })
         .then(response => {
             if (response.ok) {
@@ -257,7 +332,7 @@ function updateProduct() {
 }
 
 function deleteProduct() {
-    const productId = document.getElementById('deleteProductId').value;
+    const productId = document.getElementById('ProductId').value;
 
     fetch(`${apiBaseUrl}/products/Delete/${productId}`, {
         method: 'DELETE',

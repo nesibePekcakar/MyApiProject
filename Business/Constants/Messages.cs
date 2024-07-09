@@ -23,5 +23,8 @@ namespace Business.Constants
         public static string AccessTokenCreated="Token is created";
         public static string ProductDeleted = "Product Deleted Succesfully";
         public static string CategoryNotFound = "This category does not exists";
+        public static string ProductDoesNotExsist = "The product is not avaliable";
+
+        public static Product ProductDoesNotExist { get; internal set; }
     }
 }

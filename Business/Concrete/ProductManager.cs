@@ -29,20 +29,6 @@ namespace Business.Concrete
         }
 
 
-        [SecuredOperation("product.add,admin")]
-        [ValidationAspect(typeof(ProductValidator))]
-        public IResult Add(Product product)
-        {
-            //business codes if elses
-            //categoride max 10
-            IResult result =BusinessRules.Run(CheckCountCategory(product.CategoryId),CheckNameNonExsist(product.ProductName));
-            if (result != null)
-            {
-                return result;
-            }
-            _productDal.Add(product);
-            return new SuccessResult(Messages.ProductAdded);
-        }
 
         public IDataResult<List<Product>> GetAll()
         {
@@ -63,27 +49,77 @@ namespace Business.Concrete
 
         }
 
-        public IDataResult<Product> GetById(int id)
+        public IDataResult<Product> GetById(int productId)
         {
-            return new SuccessDataResult<Product>(_productDal.Get(p=> p.ProductId == id));
+
+            var result = CheckProductIdExsists(productId);
+            if (!result.isSuccess)
+            {
+                return result;
+            }
+            var product = _productDal.Get(p => p.ProductId == productId);
+            if (product == null)
+            {
+                return new ErrorDataResult<Product>(Messages.ProductDoesNotExist);
+            }
+            return new SuccessDataResult<Product>(product);
         }
 
         public IDataResult<List<Product>> GetByUnitPrice(decimal min, decimal max)
         {
+            var result = CheckPriceInterval(min, max);
+            if (!result.isSuccess)
+            {
+                return result;
+            }
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.UnitPrice>=min && p.UnitPrice<=max));
         }
 
         public IDataResult<List<ProductDetailDto>> GetProductDetails()
         {
-            
+            var productDetails = _productDal.GetProductDetails();
+
+            if (productDetails == null || !productDetails.Any())
+            {
+                return new ErrorDataResult<List<ProductDetailDto>>(Messages.ProductDoesNotExsist);
+            }
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
         }
 
+        public IDataResult<Product> GetByName(string name)
+        {
+            var product = _productDal.Get(p => p.ProductName == name);
+
+            if (product == null)
+            {
+                return new ErrorDataResult<Product>(Messages.ProductDoesNotExsist);
+            }
+
+            return new SuccessDataResult<Product>(product);
+        }
+
+
         [SecuredOperation("product.add,admin")]
+        [ValidationAspect(typeof(ProductValidator))]
+        public IResult Add(Product product)
+        {
+            //business codes if elses
+            //categoride max 10
+            IResult result = BusinessRules.Run(CheckCountCategory(product.CategoryId), CheckNameNonExsist(product.ProductName));
+            if (result != null)
+            {
+                return result;
+            }
+            _productDal.Add(product);
+            return new SuccessResult(Messages.ProductAdded);
+        }
+
+        [SecuredOperation("product.update,admin")]
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Update(Product product)
         {
-            if (CheckCountCategory(product.CategoryId).isSuccess)
+            var result = CheckProductIdExsists(product.ProductId);
+            if (result.isSuccess)
             {
                 _productDal.Update(product);
                 return new SuccessResult(Messages.ProductAdded);
@@ -92,7 +128,6 @@ namespace Business.Concrete
            
         }
         [SecuredOperation("product.delete,admin")]
-        [ValidationAspect(typeof(ProductValidator))]
         public IResult Delete(Product product)
         {
             if (CheckNameDoesExsist(product.ProductName).isSuccess)
@@ -105,8 +140,10 @@ namespace Business.Concrete
         }
 
 
-
+        //***********************************************************
         // Business rules for product
+        //***********************************************************
+
         private IResult CheckCountCategory(int id) 
         {
             var count = _productDal.GetAll(p => p.CategoryId == id).Count;
@@ -154,5 +191,24 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<Product>>();
         }
+        private IDataResult<Product> CheckProductIdExsists(int productId)
+        {
+            var result = _productDal.GetAll(c => c.ProductId == productId);
+            if (!result.Any())
+            {
+                return new ErrorDataResult<Product>(Messages.ProductDoesNotExsist);
+            }
+            return new SuccessDataResult<Product>();
+        }
+        private IDataResult<List<Product>> CheckPriceInterval(decimal min, decimal max)
+        {
+            var result = _productDal.GetAll(p => p.UnitPrice <= max && p.UnitPrice >= min);
+            if (!result.Any())
+            {
+                return new ErrorDataResult<List<Product>>(Messages.ProductDoesNotExsist);
+            }
+            return new SuccessDataResult<List<Product>>();
+        }
+
     }
 }

@@ -32,10 +32,10 @@ namespace WebAPI.Controllers
                 return BadRequest(result);
             }
         }
-        [HttpGet("GetByID")]
-        public IActionResult Get(int id)
+        [HttpGet("GetByID/{productId}")]
+        public IActionResult GetByID(int productId)
         {
-            var result = _productService.GetById(id);
+            var result = _productService.GetById(productId);
             if (result.isSuccess)
             {
                 return Ok(result);
@@ -45,20 +45,6 @@ namespace WebAPI.Controllers
                 return BadRequest(result);
             }
 
-        }
-
-        [HttpPost("Add")]
-        public IActionResult Post(Product product)
-        {
-            var result = _productService.Add(product);
-            if (result.isSuccess)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest(result);
-            }
         }
 
         [HttpGet("GetAllByCategory/{categoryId}")]
@@ -103,6 +89,37 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("GetByName/{name}")]
+        public IActionResult GetByName(string name)
+        {
+            var result = _productService.GetByName(name);
+            if (result.isSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+
+        [HttpPost("Add")]
+        public IActionResult Post(Product product)
+        {
+            var result = _productService.Add(product);
+            if (result.isSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+       
+
         [HttpPost("Update")]
         public IActionResult Update(Product product)
         {
@@ -119,17 +136,25 @@ namespace WebAPI.Controllers
 
         }
 
-        [HttpDelete("Delete")]
-        public IActionResult Delete(Product product)
+        [HttpDelete("Delete/{productId}")]
+        public IActionResult Delete(int productId)
         {
-            var result = _productService.Delete(product);
-            if (result.isSuccess)
+            Product product = _productService.GetById(productId).Data;
+            if (product == null)
             {
-                return Ok(result);
+                return NotFound();
             }
             else
             {
-                return BadRequest(result);
+                var result = _productService.Delete(product);
+                if (result.isSuccess)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
             }
         }
     }

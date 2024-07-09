@@ -15,18 +15,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Ensure full viewport height */
+            min-height: 100vh; 
         }
 
         .container {
             width: 100%;
-            max-width: 800px; /* Adjusted for better readability */
+            max-width: 800px; 
             background-color: #fff;
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
-            margin: 20px; /* Added margin for spacing */
+            margin: 20px; 
             justify-content: center;
             flex-wrap: wrap;
         }
@@ -53,7 +53,7 @@
             }
 
         button {
-            margin: 10px 0; /* Added margin for spacing */
+            margin: 10px 0; 
             padding: 10px 5px 5px 15px;
             cursor: pointer;
             background-color: #007bff;
@@ -61,7 +61,7 @@
             color: #fff;
             border-radius: 3px;
             display: block;
-            margin: auto; /* Center the buttons */
+            margin: auto; 
         }
 
             button:hover {
@@ -69,10 +69,14 @@
             }
 
         .product-list {
-            margin-top: 20px;
-            
-            justify-content: center; 
-            flex-wrap: wrap; 
+
+            width: 300px; /* Adjust width as needed */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
             .product-list button {
                 justify-content: center;
@@ -84,19 +88,18 @@
         .product-item {
             border-bottom: 1px solid #ccc;
             padding: 10px 0;
-            margin-bottom: 10px; /* Added margin between product items */
+            margin-bottom: 10px;
         }
 
-        /* Specific styles for login page */
         #auth {
             background-color: #f9f9f9;
             padding: 40px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px; /* Added margin for separation */
+            margin-bottom: 20px; 
         }
 
-        /* Styles for different sections */
+ 
         .action-section {
             display: none;
         }
@@ -176,8 +179,12 @@
                     <input type="number" id="updateProductCategory">
                 </div>
                 <div class="form-group">
-                    <label for="updateProductPrice">Price</label>
-                    <input type="number" id="updateProductPrice">
+                    <label for="productPrice">Price</label>
+                    <input type="number" id="updateUnitPrice">
+                </div>
+                <div class="form-group">
+                    <label for="unitsInStock">Units in Stock</label>
+                    <input type="number" id="updateUnitsInStock">
                 </div>
                 <button onclick="updateProduct()">Update Product</button>
             </div>
@@ -186,7 +193,7 @@
                 <h2>Delete Product</h2>
                 <div class="form-group">
                     <label for="deleteProductId">Product ID</label>
-                    <input type="number" id="deleteProductId">
+                    <input type="number" id="ProductId">
                 </div>
                 <button onclick="deleteProduct()">Delete Product</button>
             </div>
@@ -195,6 +202,7 @@
                 <h2>List Products</h2>
                 <div style="margin-bottom: 10px;">
                     <button onclick="getAllProducts()">Get All Products</button>
+                    <button onclick="getProductDetails()">Get Product Details</button>
                     <button onclick="showFilter('category')">Get Products by Category</button>
                     <button onclick="showFilter('unitPrice')">Get Products by Unit Price</button>
                     <button onclick="showFilter('productId')">Get Product by ID</button>
@@ -217,13 +225,13 @@
 
                 <div class="form-group" id="productIdInput" style="display: none;">
                     <label for="productId">Product ID</label>
-                    <input type="number" id="productId">
+                    <input type="number" id="id" min="1" required>
                     <button onclick="getProductById()">Find</button>
                 </div>
 
                 <div class="form-group" id="productNameInput" style="display: none;">
                     <label for="productName">Product Name</label>
-                    <input type="text" id="productName">
+                    <input type="text" id="name">
                     <button onclick="getProductByName()">Find</button>
                 </div>
 

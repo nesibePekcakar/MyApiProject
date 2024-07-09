@@ -41,7 +41,7 @@ namespace DataAccess.Concrete.EntitiyFramework
             {
                 try
                 {
-                    return context.Set<Product>().SingleOrDefault(filter);
+                    return context.Set<Product>().FirstOrDefault(filter);
                 }
                 catch (Exception ex) {
 

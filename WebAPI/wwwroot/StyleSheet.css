@@ -55,7 +55,7 @@ button {
 .list-buttons {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start; /* Align buttons to the left */
+    justify-content: space-evenly; /* Align buttons to the left */
     margin-bottom: 10px;
 }
 .product-item {

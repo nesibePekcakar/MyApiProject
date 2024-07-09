@@ -13,11 +13,12 @@ namespace Business.Abstract
         IDataResult<List<Product>>GetAllByCategory(int id);
         IDataResult<List<Product>> GetByUnitPrice(decimal min, decimal max);
         IDataResult<List<ProductDetailDto>> GetProductDetails();
+        IDataResult<Product> GetByName(string name);
+
         IResult Add(Product product);
         IDataResult<Product> GetById(int id);
-        public IResult Delete(Product product);
+        IResult Delete(Product product);
         IResult Update(Product product);
-
-
+        
     }
 }
