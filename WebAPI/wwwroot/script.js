@@ -7,6 +7,16 @@
 const apiBaseUrl = 'https://localhost:7171/api';
 let token = '';
 
+function showRegisterPage() {
+    document.getElementById('auth').style.display = 'none';
+    document.getElementById('register').style.display = 'block';
+}
+
+function showLoginPage() {
+    document.getElementById('auth').style.display = 'block';
+    document.getElementById('register').style.display = 'none';
+}
+
 function login() {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
@@ -35,8 +45,10 @@ function login() {
 }
 
 function register() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
 
     fetch(`${apiBaseUrl}/auth/register`, {
         method: 'POST',
@@ -44,22 +56,26 @@ function register() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            email,
-            password
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password
         })
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.token) {
-                token = data.token;
-                document.getElementById('auth').style.display = 'none';
-                document.getElementById('product-management').style.display = 'block';
-                document.getElementById('app').classList.add('loggedin');
+        .then(response => {
+            if (response.ok) {
+                alert('Registration successful');
+                showLoginPage();
             } else {
-                alert('Registration failed');
+                alert('Failed to register');
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during registration');
         });
 }
+
 
 function showAction(action) {
     document.querySelectorAll('.action-section').forEach(section => section.classList.remove('active'));

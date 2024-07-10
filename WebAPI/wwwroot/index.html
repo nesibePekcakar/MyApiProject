@@ -125,7 +125,29 @@
                 <input type="password" id="loginPassword">
             </div>
             <button onclick="login()">Login</button>
+            <button onclick="showRegisterPage()">Register</button>
+        </div>
+
+        <div id="register" style="display:none;">
+            <h2>Register</h2>
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName">
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName">
+            </div>
+            <div class="form-group">
+                <label for="registerEmail">Email</label>
+                <input type="email" id="registerEmail">
+            </div>
+            <div class="form-group">
+                <label for="registerPassword">Password</label>
+                <input type="password" id="registerPassword">
+            </div>
             <button onclick="register()">Register</button>
+            <button onclick="showLoginPage()">Back to Login</button>
         </div>
 
         <div id="product-management" style="display:none;">
