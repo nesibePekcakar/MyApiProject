@@ -16,6 +16,11 @@ function showLoginPage() {
     document.getElementById('auth').style.display = 'block';
     document.getElementById('register').style.display = 'none';
 }
+function displayErrorMessage(message) {
+    const errorMessageContainer = document.getElementById('errorMessageContainer');
+    errorMessageContainer.textContent = message;
+    errorMessageContainer.style.display = 'block';
+}
 
 function login() {
     const email = document.getElementById('loginEmail').value;
@@ -31,7 +36,14 @@ function login() {
             password
         })
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error( 'Login failed. Please check your email and password.');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.token) {
                 token = data.token;
@@ -40,7 +52,11 @@ function login() {
                 document.getElementById('app').classList.add('loggedin');
             } else {
                 alert('Login failed');
+                displayErrorMessage('Login failed. Please check your email and password.');
             }
+        })
+        .catch(error => {
+            displayErrorMessage("Login failed.");
         });
 }
 
@@ -265,8 +281,13 @@ function getProductDetails() {
             }
             return response.json();
         })
+
         .then(data => {
+            if (data.error) {
+                throw new Error(data.message);
+            }
             displayProductDetails(data);
+            
         })
         .catch(error => {
             productDetailsDiv.innerHTML = `<p>Error fetching product details: ${error.message}</p>`;

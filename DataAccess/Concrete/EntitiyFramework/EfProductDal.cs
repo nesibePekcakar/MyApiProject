@@ -57,15 +57,19 @@ namespace DataAccess.Concrete.EntitiyFramework
             {
                 try
                 {
-                    return filter == null ? context.Set<Product>().ToList()
-                        : context.Set<Product>().Where(filter).ToList();
+                    var query = context.Set<Product>().AsQueryable();
+
+                    if (filter != null)
+                    {
+                        query = query.Where(filter);
+                    }
+
+                    return query.ToList();
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"An error occurred: {ex.Message}");
-
-                    throw new Exception("Error while retrieving product", ex);
-
+                    throw new Exception("Error while retrieving products", ex);
                 }
             }
         }
