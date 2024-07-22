@@ -369,7 +369,8 @@ function updateProduct() {
 }
 
 function deleteProduct() {
-    const productId = document.getElementById('ProductId').value;
+
+    const productId = parseInt(document.getElementById('deleteProductId').value.trim(), 10);
 
     fetch(`${apiBaseUrl}/products/Delete/${productId}`, {
         method: 'DELETE',
